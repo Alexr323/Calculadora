@@ -1,69 +1,141 @@
-import Image from "next/image";
+
+"use client";
+
+import { useState } from "react";
 
 export default function Home() {
+  const [numero1, setNumero1] = useState("");
+  const [numero2, setNumero2] = useState("");
+  const [operacion, setOperacion] = useState("suma");
+  const [resultado, setResultado] = useState<number | null>(null);
+  const [error, setError] = useState("");
+
+  function calcular() {
+    setError("");
+    setResultado(null);
+
+    if (numero1.trim() === "" || numero2.trim() === "") {
+      setError("Debes ingresar los dos números.");
+      return;
+    }
+
+    const n1 = Number(numero1);
+    const n2 = Number(numero2);
+
+    if (!Number.isFinite(n1) || !Number.isFinite(n2)) {
+      setError("Ingresa solamente números válidos.");
+      return;
+    }
+
+    let total = 0;
+
+    switch (operacion) {
+      case "suma":
+        total = n1 + n2;
+        break;
+      case "resta":
+        total = n1 - n2;
+        break;
+      case "multiplicacion":
+        total = n1 * n2;
+        break;
+      case "division":
+        if (n2 === 0) {
+          setError("No se puede dividir entre cero.");
+          return;
+        }
+        total = n1 / n2;
+        break;
+    }
+
+    setResultado(total);
+  }
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
+    <main className="min-h-screen flex items-center justify-center bg-black p-6">
+      <div className="w-full max-w-md rounded-2xl border border-red-900 bg-zinc-950 p-8 shadow-2xl shadow-red-950/40">
+        <div className="mb-8 text-center">
+          <h1 className="text-3xl font-extrabold tracking-wide text-red-600">
+            CALCULADORA
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className="mt-2 text-sm text-zinc-400">
+            Operaciones matemáticas
           </p>
+          <div className="mx-auto mt-4 h-1 w-20 rounded-full bg-red-600"></div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        <div className="mb-5">
+          <label className="mb-2 block font-medium text-zinc-300">
+            Primer número
+          </label>
+          <input
+            type="text"
+            inputMode="decimal"
+            value={numero1}
+            onChange={(e) => setNumero1(e.target.value)}
+            placeholder="Escribe un número"
+            className="w-full rounded-lg border border-zinc-700 bg-zinc-900 p-3 text-white outline-none transition focus:border-red-600 focus:ring-1 focus:ring-red-600"
+          />
         </div>
-      </main>
-    </div>
+
+        <div className="mb-5">
+          <label className="mb-2 block font-medium text-zinc-300">
+            Segundo número
+          </label>
+          <input
+            type="text"
+            inputMode="decimal"
+            value={numero2}
+            onChange={(e) => setNumero2(e.target.value)}
+            placeholder="Escribe otro número"
+            className="w-full rounded-lg border border-zinc-700 bg-zinc-900 p-3 text-white outline-none transition focus:border-red-600 focus:ring-1 focus:ring-red-600"
+          />
+        </div>
+
+        <div className="mb-7">
+          <label className="mb-2 block font-medium text-zinc-300">
+            Operación matemática
+          </label>
+          <select
+            value={operacion}
+            onChange={(e) => setOperacion(e.target.value)}
+            className="w-full rounded-lg border border-zinc-700 bg-zinc-900 p-3 text-white outline-none focus:border-red-600"
+          >
+            <option value="suma">Suma (+)</option>
+            <option value="resta">Resta (-)</option>
+            <option value="multiplicacion">Multiplicación (×)</option>
+            <option value="division">División (÷)</option>
+          </select>
+        </div>
+
+        <button
+          onClick={calcular}
+          className="w-full rounded-lg bg-red-700 p-3 font-bold text-white transition hover:bg-red-600 active:scale-95"
+        >
+          CALCULAR RESULTADO
+        </button>
+
+        {error && (
+          <p className="mt-5 rounded-lg border border-red-800 bg-red-950 p-3 text-center text-sm text-red-400">
+            {error}
+          </p>
+        )}
+
+        {resultado !== null && (
+          <div className="mt-6 rounded-xl border border-red-800 bg-red-950/50 p-5 text-center">
+            <p className="text-sm font-medium uppercase tracking-widest text-zinc-400">
+              Resultado
+            </p>
+            <p className="mt-2 break-all text-3xl font-extrabold text-red-500">
+              {resultado}
+            </p>
+          </div>
+        )}
+
+        <p className="mt-8 text-center text-xs text-zinc-600">
+          Calculadora Matemática © 2026
+        </p>
+      </div>
+    </main>
   );
 }
